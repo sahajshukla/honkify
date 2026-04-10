@@ -442,8 +442,37 @@ def _render_before_tab(live_df, reviews_df, appeals_df, perf_df=None):
 
     st.markdown("<div style='height:24px'></div>", unsafe_allow_html=True)
 
-    # Section 6
-    st.markdown(f'<div style="color:{SPOTIFY_WHITE}; font-size:18px; font-weight:800;">6 · LLM assistant — valuable but needs workflow refinement</div>', unsafe_allow_html=True)
+    # Section 6 — Explainability gap
+    st.markdown(f'<div style="color:{SPOTIFY_WHITE}; font-size:18px; font-weight:800;">6 · Explainability gap — why was this stream flagged?</div>', unsafe_allow_html=True)
+    st.markdown(
+        f"""
+        <div style="background:{SPOTIFY_CARD_BG}; border-radius:8px; padding:16px 20px; border:1px solid rgba(83,83,83,0.25); border-left:4px solid {COLOR_WARNING}; margin-top:8px; margin-bottom:12px;">
+            <div style="color:{COLOR_WARNING}; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">The two-sided problem</div>
+            <div style="color:{SPOTIFY_LIGHT_GRAY}; font-size:13px; line-height:1.7;">
+                <strong style="color:{SPOTIFY_WHITE};">For the business:</strong> The model outputs a fraud probability score (e.g., 0.84) but cannot explain
+                <em>which signals</em> drove that score or <em>how the weights are distributed</em> across features.
+                Analysts cannot learn from the model's decisions — they see the verdict but not the reasoning.
+                If the model is picking up on new patterns (e.g., geographic clustering after a catalog acquisition),
+                the team has no visibility into that evolution. This limits the team's ability to improve manual review
+                and to calibrate their own judgment over time.<br><br>
+                <strong style="color:{SPOTIFY_WHITE};">For compliance:</strong> When an artist or label complains — "why were my streams quarantined?" —
+                the only answer today is the probability score. Under GDPR Article 22, individuals have the right to
+                "meaningful information about the logic involved" in automated decisions with significant effects.
+                Under the EU AI Act, high-risk AI systems require transparency about decision factors.
+                A probability score is not an explanation. Without feature-level explainability (e.g., SHAP values showing
+                "VPN usage contributed 35%, account age contributed 28%, play duration contributed 22%"),
+                Spotify cannot defend its quarantine decisions in a regulatory inquiry or artist lawsuit.
+                <strong style="color:{COLOR_WARNING};">Risk R11, Observation O-007.</strong>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown("<div style='height:18px'></div>", unsafe_allow_html=True)
+
+    # Section 7 — LLM assistant
+    st.markdown(f'<div style="color:{SPOTIFY_WHITE}; font-size:18px; font-weight:800;">7 · LLM assistant — valuable but needs workflow refinement</div>', unsafe_allow_html=True)
     st.markdown(
         f"""
         <div style="background:linear-gradient(135deg, rgba(29,185,84,0.06), {SPOTIFY_CARD_BG}); border-radius:8px; padding:16px 20px; border-left:4px solid {SPOTIFY_GREEN}; margin-top:8px; margin-bottom:10px;">
@@ -695,8 +724,35 @@ def _render_after_tab(live_df, reviews_df, appeals_df):
 
     st.markdown("<div style='height:24px'></div>", unsafe_allow_html=True)
 
-    # Section 5
-    st.markdown(f'<div style="color:{SPOTIFY_WHITE}; font-size:18px; font-weight:800;">5 · Audit trail with attestation</div>', unsafe_allow_html=True)
+    # Section 5 — Explainability (After)
+    st.markdown(f'<div style="color:{SPOTIFY_WHITE}; font-size:18px; font-weight:800;">5 · Explainability — what the analyst and artist now see</div>', unsafe_allow_html=True)
+    st.markdown(
+        f"""
+        <div style="background:linear-gradient(135deg, rgba(29,185,84,0.06), {SPOTIFY_CARD_BG}); border-radius:8px; padding:16px 20px; border-left:4px solid {SPOTIFY_GREEN}; margin-top:8px; margin-bottom:12px;">
+            <div style="color:{SPOTIFY_GREEN}; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">After: feature-level explainability deployed</div>
+            <div style="color:{SPOTIFY_LIGHT_GRAY}; font-size:13px; line-height:1.7;">
+                <strong style="color:{SPOTIFY_WHITE};">What the analyst sees:</strong> The Signal Card's "Top 3 contributing signals" chips (visible in the queue rows above)
+                are a simplified SHAP output — they show which features most influenced the model's score for this specific stream.
+                This lets analysts learn from the model: "the model is flagging VPN + short play duration + new account age — I should
+                pay attention to that combination."<br><br>
+                <strong style="color:{SPOTIFY_WHITE};">What the artist sees (on appeal):</strong> Instead of "your streams received a fraud score of 0.84,"
+                the response can now say: "your streams were flagged because VPN usage contributed 35% to the score,
+                play duration consistency contributed 28%, and account age contributed 22%. If these signals do not apply to your
+                situation, the appeal will likely result in clearance."<br><br>
+                <strong style="color:{SPOTIFY_WHITE};">What the business learns:</strong> Aggregate SHAP analysis across all quarantine decisions reveals
+                which features the model relies on most heavily. When a catalog acquisition shifts the feature distribution,
+                the business can see exactly which new signals are triggering — enabling targeted retraining rather than blind re-runs.
+                <strong style="color:{SPOTIFY_GREEN};">This closes the black-box gap. Risk R11 addressed.</strong>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown("<div style='height:18px'></div>", unsafe_allow_html=True)
+
+    # Section 6 — Audit trail
+    st.markdown(f'<div style="color:{SPOTIFY_WHITE}; font-size:18px; font-weight:800;">6 · Audit trail with attestation</div>', unsafe_allow_html=True)
     _render_audit_trail_card()
 
 
