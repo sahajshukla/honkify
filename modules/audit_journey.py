@@ -1441,7 +1441,7 @@ def _render_scenario_c_data_poisoning():
         <div style="background:linear-gradient(135deg, rgba(232,17,91,0.10), {SPOTIFY_CARD_BG}); border-radius:8px; padding:18px 24px; border-left:4px solid {COLOR_DANGER}; margin-top:16px;">
             <div style="color:{COLOR_DANGER}; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Why This Connects to the Circular Dependency Insight</div>
             <div style="color:{SPOTIFY_WHITE}; font-size:14px; line-height:1.6;">
-                This is the data poisoning version of the circular dependency we identified in Risk 3. There, the threat was unintentional — analysts rubber-stamping AI recommendations that became labels. Here, the threat is deliberate — a bad actor specifically engineering the inputs that become labels. Both attacks succeed for the same structural reason: there is no quality gate between analyst/appeal decisions and the training pipeline. The same control fixes both: quality-weighted labels, source verification, anomaly detection on the ground truth pipeline itself.
+                This is the data poisoning version of the training label quality concern we identified in Risk 3. There, the concern was that analyst decisions anchored to the LLM's first impression could reduce label independence. Here, the threat is deliberate — a bad actor specifically engineering the inputs that become labels. Both scenarios benefit from the same structural fix: quality-weighted labels with provenance, source verification, and anomaly detection on the ground truth pipeline itself.
             </div>
         </div>
         """,
@@ -1728,7 +1728,7 @@ def _render_scenario_f_bias_detection():
         f"""
         <div style="background:rgba(80,155,245,0.08); border-left:3px solid {COLOR_INFO}; padding:10px 14px; border-radius:6px; margin-bottom:20px;">
             <span style="color:{COLOR_INFO}; font-size:11px; font-weight:700;">DSA + EU AI ACT ANGLE:</span>
-            <span style="color:{SPOTIFY_LIGHT_GRAY}; font-size:12px;"> EU AI Act Article 14 requires meaningful human oversight for AI systems with material impact. A rubber-stamping analyst does not constitute meaningful oversight. Continuous monitoring of analyst behavior is what makes Article 14 compliance verifiable rather than aspirational.</span>
+            <span style="color:{SPOTIFY_LIGHT_GRAY}; font-size:12px;"> EU AI Act Article 14 requires meaningful human oversight for AI systems with material impact. The Signal Card resequencing ensures analyst independence is verifiable — not assumed. Continuous monitoring of analyst behavior is what makes Article 14 compliance demonstrable rather than aspirational.</span>
         </div>
         """,
         unsafe_allow_html=True,

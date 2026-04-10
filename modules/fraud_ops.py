@@ -348,7 +348,7 @@ def _render_drift_and_thresholds(perf_df):
         apply_spotify_style(fig, height=280)
         st.plotly_chart(fig, use_container_width=True)
         st.markdown(
-            f'<div style="color:{SPOTIFY_LIGHT_GRAY}; font-size:11px;">Precision dropped 94% → 82% post-acquisition. PSI exceeded 0.20 critical threshold. <strong style="color:{COLOR_DANGER};">No alert fired — no continuous monitoring existed. Risk R1, R4.</strong></div>',
+            f'<div style="color:{SPOTIFY_LIGHT_GRAY}; font-size:11px;">Scenario modeling: precision declining post-acquisition, PSI elevated. <strong style="color:{COLOR_DANGER};">No automated alert exists — no continuous monitoring. Risk R1, R4.</strong> <em style="color:{SPOTIFY_GRAY};">(Illustrative data.)</em></div>',
             unsafe_allow_html=True,
         )
 
@@ -409,7 +409,7 @@ def _render_before_tab(live_df, reviews_df, appeals_df, perf_df=None):
 
     # Section 1 — Model & threshold issues
     st.markdown(f'<div style="color:{SPOTIFY_WHITE}; font-size:18px; font-weight:800; margin-top:8px;">1 · Model drift & ungoverned thresholds</div>', unsafe_allow_html=True)
-    st.markdown(f'<div style="color:{SPOTIFY_LIGHT_GRAY}; font-size:12px; margin-bottom:12px;">Post-catalog-acquisition, precision dropped from 94% to 82% with no alert. Classification thresholds were set by engineering without business approval. <strong style="color:{COLOR_DANGER};">Risks R1, R2, R4.</strong></div>', unsafe_allow_html=True)
+    st.markdown(f'<div style="color:{SPOTIFY_LIGHT_GRAY}; font-size:12px; margin-bottom:12px;">Post-catalog-acquisition, our scenario modeling shows precision declining with no automated alert — the model was last retrained 4 months ago and a significant catalog acquisition has since changed content distribution. Thresholds set by engineering without business approval. <strong style="color:{COLOR_DANGER};">Risks R1, R2, R4.</strong> <em style="color:{SPOTIFY_GRAY};">(Precision figures based on illustrative scenario data.)</em></div>', unsafe_allow_html=True)
     _render_drift_and_thresholds(perf_df)
 
     st.markdown("<div style='height:18px'></div>", unsafe_allow_html=True)
@@ -437,7 +437,7 @@ def _render_before_tab(live_df, reviews_df, appeals_df, perf_df=None):
 
     # Section 5
     st.markdown(f'<div style="color:{SPOTIFY_WHITE}; font-size:18px; font-weight:800;">5 · Appeals backlog</div>', unsafe_allow_html=True)
-    st.markdown(f'<div style="color:{SPOTIFY_LIGHT_GRAY}; font-size:12px; margin-bottom:8px;">Indie artists wait 38 days on average. Major labels 11. No SLA. Forty percent of appeals are eventually overturned. <strong style="color:{COLOR_DANGER};">Risks R5, R6.</strong></div>', unsafe_allow_html=True)
+    st.markdown(f'<div style="color:{SPOTIFY_LIGHT_GRAY}; font-size:12px; margin-bottom:8px;">The case study confirms a 6-week appeal resolution for one indie label dispute. Our scenario data models a systemic pattern where resolution times vary by artist type, with no formal SLA in place. <strong style="color:{COLOR_DANGER};">Risks R5, R6.</strong> <em style="color:{SPOTIFY_GRAY};">(Resolution time breakdown based on illustrative data.)</em></div>', unsafe_allow_html=True)
     _render_appeal_backlog_chart(appeals_df)
 
     st.markdown("<div style='height:24px'></div>", unsafe_allow_html=True)

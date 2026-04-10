@@ -360,9 +360,9 @@ def render(events_df: pd.DataFrame, reviews_df: pd.DataFrame, appeals_df: pd.Dat
                     <td style="color:{SPOTIFY_LIGHT_GRAY}; padding:10px 0;">Research: distribution shift → elevated false positives on new data</td>
                 </tr>
                 <tr style="border-bottom:1px solid rgba(83,83,83,0.15);">
-                    <td style="color:{SPOTIFY_WHITE}; padding:10px 0;">3 analysts agree >97%, <80s/case</td>
-                    <td style="color:{SPOTIFY_LIGHT_GRAY}; padding:10px 0;">Automation bias / rubber-stamping</td>
-                    <td style="color:{SPOTIFY_LIGHT_GRAY}; padding:10px 0;">Case study: "92% agreement rate"; automation bias research (Springer 2025)</td>
+                    <td style="color:{SPOTIFY_WHITE}; padding:10px 0;">Per-analyst agreement patterns (illustrative)</td>
+                    <td style="color:{SPOTIFY_LIGHT_GRAY}; padding:10px 0;">Analyst independence — validate via challenge cases</td>
+                    <td style="color:{SPOTIFY_LIGHT_GRAY}; padding:10px 0;">Synthetic data; real validation requires challenge case program</td>
                 </tr>
                 <tr style="border-bottom:1px solid rgba(83,83,83,0.15);">
                     <td style="color:{SPOTIFY_WHITE}; padding:10px 0;">Indie appeals: 38 days vs major: 11 days</td>

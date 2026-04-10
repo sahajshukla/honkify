@@ -345,7 +345,7 @@ def render():
         f'<p style="color:{SPOTIFY_LIGHT_GRAY}; font-size:15px; margin-top:-8px;">'
         "Experience the proposed analyst workflow. Evaluate each signal independently, "
         "make your classification decision, then see how the AI would have classified it. "
-        "This replaces the current LLM-summary-first process that enables rubber-stamping."
+        "This resequences the workflow so analysts assess signals first, then receive the LLM summary as a second opinion."
         "</p>",
         unsafe_allow_html=True,
     )
