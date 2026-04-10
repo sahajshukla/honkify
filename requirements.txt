@@ -1,0 +1,11 @@
+streamlit>=1.38.0
+pandas>=2.2.0
+numpy>=1.26.0
+plotly>=5.22.0
+scikit-learn>=1.5.0
+scipy>=1.13.0
+anthropic>=0.40.0
+google-cloud-bigquery>=3.20.0
+google-cloud-pubsub>=2.21.0
+google-cloud-storage>=2.16.0
+db-dtypes>=1.2.0

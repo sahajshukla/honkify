@@ -1,0 +1,13 @@
+venv/
+__pycache__/
+*.pyc
+.DS_Store
+.env
+data/cached/*.csv
+data/cached/pipelines/*.csv
+*.egg-info/
+dist/
+build/
+sa-key.json
+*.pptx
+generate_pptx.py
