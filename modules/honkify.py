@@ -845,6 +845,7 @@ def render():
 
     # Story navigation → next page
     # Count review-zone events for the handoff message
+    from utils.data_loader import load_honkify_live_events
     _handoff_df, _handoff_src = load_honkify_live_events()
     _review_count = int((_handoff_df["classification"] == "review").sum()) if len(_handoff_df) > 0 else 0
     _handoff_msg = (
