@@ -492,35 +492,34 @@ def _render_new_queue_rows(review_df: pd.DataFrame):
         ])
 
         age = int(row.get("account_age_days", 999))
-        grace_html = ""
-        if age < 90:
-            grace_html = f"""
-            <div style="margin-top:10px; padding:8px 12px; background:rgba(245,155,35,0.08); border-radius:6px; border-left:3px solid {COLOR_WARNING};">
-                <div style="color:{COLOR_WARNING}; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:1px;">▣ NEW CATALOG · grace period day {age}/90</div>
-                <div style="color:{SPOTIFY_LIGHT_GRAY}; font-size:11px; margin-top:3px;">Threshold raised 0.95 → 0.98 · Provisional royalty paid · Retraining cohort R-2026-04 (T-{30 - (age % 30)} days)</div>
-            </div>
-            """
 
         st.markdown(
             f"""
-            <div style="background:{SPOTIFY_CARD_BG}; border-radius:8px; margin-bottom:10px; border:1px solid rgba(83,83,83,0.25); border-left:3px solid {SPOTIFY_GREEN}; overflow:hidden;">
-                <div style="padding:14px 18px;">
-                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                        <div>
-                            <div style="color:{SPOTIFY_WHITE}; font-size:14px; font-weight:600;">{row.get('track_name','—')} <span style="color:{SPOTIFY_LIGHT_GRAY}; font-weight:400;">by {row.get('artist_name','—')}</span></div>
-                            <div style="color:{SPOTIFY_GRAY}; font-size:11px; margin-top:4px;">{row.get('event_id','—')} &middot; user {row.get('user_id','—')} &middot; score {float(row.get('fraud_score',0)):.2f}</div>
-                        </div>
-                        <div style="text-align:right;">
-                            <div style="color:{SPOTIFY_LIGHT_GRAY}; font-size:10px; text-transform:uppercase; letter-spacing:1px;">Top contributing signals</div>
-                            <div style="margin-top:6px;">{chip_html}</div>
-                        </div>
+            <div style="background:{SPOTIFY_CARD_BG}; border-radius:8px; margin-bottom:2px; border:1px solid rgba(83,83,83,0.25); border-left:3px solid {SPOTIFY_GREEN}; padding:14px 18px;">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                    <div>
+                        <div style="color:{SPOTIFY_WHITE}; font-size:14px; font-weight:600;">{row.get('track_name','—')} <span style="color:{SPOTIFY_LIGHT_GRAY}; font-weight:400;">by {row.get('artist_name','—')}</span></div>
+                        <div style="color:{SPOTIFY_GRAY}; font-size:11px; margin-top:4px;">{row.get('event_id','—')} · user {row.get('user_id','—')} · score {float(row.get('fraud_score',0)):.2f}</div>
                     </div>
-                    {grace_html}
+                    <div style="text-align:right;">
+                        <div style="color:{SPOTIFY_LIGHT_GRAY}; font-size:10px; text-transform:uppercase; letter-spacing:1px;">Top contributing signals</div>
+                        <div style="margin-top:6px;">{chip_html}</div>
+                    </div>
                 </div>
             </div>
             """,
             unsafe_allow_html=True,
         )
+        if age < 90:
+            st.markdown(
+                f'<div style="margin:-2px 0 10px 0; padding:8px 12px; background:rgba(245,155,35,0.08); border-radius:0 0 8px 8px; border-left:3px solid {COLOR_WARNING};">'
+                f'<span style="color:{COLOR_WARNING}; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:1px;">NEW CATALOG · grace period day {age}/90</span>'
+                f'<span style="color:{SPOTIFY_LIGHT_GRAY}; font-size:11px; margin-left:12px;">Threshold raised 0.95 → 0.98 · Provisional royalty paid · Retraining T-{30 - (age % 30)} days</span>'
+                f'</div>',
+                unsafe_allow_html=True,
+            )
+        else:
+            st.markdown("<div style='margin-bottom:10px'></div>", unsafe_allow_html=True)
 
 
 def _render_post_controls_bias_chart(reviews_df: pd.DataFrame):
