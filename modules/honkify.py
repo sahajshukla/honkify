@@ -475,7 +475,8 @@ def render():
         with col:
             is_active = mode == mode_key
             border = info["color"] if is_active else SPOTIFY_GRAY
-            bg = f"rgba({','.join(str(int(info['color'].hex[i:i+2], 16)) for i in (0,2,4))},0.08)" if is_active else SPOTIFY_CARD_BG
+            _c = info["color"]
+            bg = f"rgba({_c[0]},{_c[1]},{_c[2]},0.08)" if is_active else SPOTIFY_CARD_BG
             st.markdown(
                 f"""
                 <div style="background:{bg}; border-radius:8px; padding:14px 16px; border:1px solid {border}; border-left:4px solid {border}; min-height:160px;">
