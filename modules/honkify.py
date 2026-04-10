@@ -437,45 +437,66 @@ def render():
         unsafe_allow_html=True,
     )
 
-    mode_col1, mode_col2, mode_col3, mode_col4 = st.columns(4)
+    MODE_OPTIONS = {
+        "real": {
+            "label": "Auto-cleared",
+            "zone": "score < 0.70 → PASS",
+            "color": SPOTIFY_GREEN,
+            "icon": "●",
+            "desc": "Simulates a legitimate listener. Normal play durations, varied devices, low fraud score. Stream passes through automatically — no human review needed. This is 92% of all traffic.",
+            "downstream": "Royalties flow immediately. Not visible to Fraud Ops.",
+        },
+        "edge_case": {
+            "label": "Sent to analyst review",
+            "zone": "score 0.70–0.95 → REVIEW",
+            "color": COLOR_WARNING,
+            "icon": "◐",
+            "desc": "Simulates an ambiguous case — could be fraud or a legitimate edge case. Mixed signals. Stream enters the Fraud Ops review queue for human assessment via the Signal Card.",
+            "downstream": "Queued for analyst review on Fraud Operations page →",
+        },
+        "bot": {
+            "label": "Auto-quarantined",
+            "zone": "score > 0.95 → QUARANTINE",
+            "color": COLOR_DANGER,
+            "icon": "◉",
+            "desc": "Simulates a streaming farm. Fixed ~31s plays, web player only, VPN, suspicious geography. Stream is automatically quarantined — no human review.",
+            "downstream": "Royalties frozen. Clawback eligible. Visible in audit reconciliation.",
+        },
+    }
 
-    with mode_col1:
-        if st.button("Real Listener", use_container_width=True, type="primary" if st.session_state["honkify_user_mode"] == "real" else "secondary"):
-            st.session_state["honkify_user_mode"] = "real"
-            st.rerun()
-    with mode_col2:
-        if st.button("Bot Listener", use_container_width=True, type="primary" if st.session_state["honkify_user_mode"] == "bot" else "secondary"):
-            st.session_state["honkify_user_mode"] = "bot"
-            st.rerun()
-    with mode_col3:
-        if st.button("Edge Case", use_container_width=True, type="primary" if st.session_state["honkify_user_mode"] == "edge_case" else "secondary"):
-            st.session_state["honkify_user_mode"] = "edge_case"
-            st.rerun()
-    with mode_col4:
-        if st.button("Clear Session", use_container_width=True):
-            st.session_state["honkify_events"] = []
-            st.rerun()
-
-    # Mode indicator
     mode = st.session_state["honkify_user_mode"]
-    mode_label = {"real": "Real Listener", "bot": "Bot Listener", "edge_case": "Edge Case"}[mode]
-    mode_color = {"real": SPOTIFY_GREEN, "bot": COLOR_DANGER, "edge_case": COLOR_WARNING}[mode]
-    mode_desc = {
-        "real": "Normal listening behavior. Varied durations, normal devices, low fraud scores. Will pass through.",
-        "bot": "Bot-like behavior. ~31 second plays, web player, suspicious country, VPN, high fraud scores. Will be quarantined.",
-        "edge_case": "Realistic but ambiguous. Could go either way. Will likely enter the review zone for human analyst attention.",
-    }[mode]
-
     st.markdown(
-        f"""
-        <div style="background:{SPOTIFY_CARD_BG}; border-radius:8px; padding:14px 20px; border:1px solid rgba(83,83,83,0.25); border-left:4px solid {mode_color}; margin-bottom:24px;">
-            <div style="color:{mode_color}; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Active Listener Mode</div>
-            <div style="color:{SPOTIFY_WHITE}; font-size:15px; font-weight:700;">{mode_label}</div>
-            <div style="color:{SPOTIFY_LIGHT_GRAY}; font-size:12px; margin-top:4px;">{mode_desc}</div>
-        </div>
-        """,
+        f'<div style="color:{SPOTIFY_LIGHT_GRAY}; font-size:13px; margin-bottom:8px;">Choose what kind of event to generate. Each mode simulates a different listener profile and determines where the stream lands in the pipeline.</div>',
         unsafe_allow_html=True,
     )
+
+    mode_cols = st.columns(3)
+    for col, (mode_key, info) in zip(mode_cols, MODE_OPTIONS.items()):
+        with col:
+            is_active = mode == mode_key
+            border = info["color"] if is_active else SPOTIFY_GRAY
+            bg = f"rgba({','.join(str(int(info['color'].hex[i:i+2], 16)) for i in (0,2,4))},0.08)" if is_active else SPOTIFY_CARD_BG
+            st.markdown(
+                f"""
+                <div style="background:{bg}; border-radius:8px; padding:14px 16px; border:1px solid {border}; border-left:4px solid {border}; min-height:160px;">
+                    <div style="color:{info['color']}; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px;">{info['icon']} {info['label']}</div>
+                    <div style="color:{SPOTIFY_WHITE}; font-size:12px; font-weight:700; margin-top:4px; font-family:monospace;">{info['zone']}</div>
+                    <div style="color:{SPOTIFY_LIGHT_GRAY}; font-size:11px; margin-top:6px; line-height:1.5;">{info['desc']}</div>
+                    <div style="color:{info['color']}; font-size:10px; margin-top:6px; font-weight:600;">{info['downstream']}</div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+            if st.button(
+                f"{'● Active' if is_active else 'Select'}",
+                key=f"mode_{mode_key}",
+                use_container_width=True,
+                type="primary" if is_active else "secondary",
+            ):
+                st.session_state["honkify_user_mode"] = mode_key
+                st.rerun()
+
+    st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
 
     # --- Pipeline Counter (single row of 4 metrics + 2 action buttons) ---
     stats = st.session_state.get("_honkify_stats")
@@ -822,7 +843,14 @@ def render():
     )
 
     # Story navigation → next page
-    story_next(
-        "Fraud Operations",
-        "See what happens to the events you just generated. The Before tab shows the broken analyst workflow. The After tab shows the Signal Confirmation Card that fixes it.",
+    # Count review-zone events for the handoff message
+    _handoff_df, _handoff_src = load_honkify_live_events()
+    _review_count = int((_handoff_df["classification"] == "review").sum()) if len(_handoff_df) > 0 else 0
+    _handoff_msg = (
+        f"Your review-zone events ({_review_count} cases) are now in the analyst queue. "
+        "The Before tab shows the current workflow. The After tab shows the resequenced Signal Card — "
+        "assess signals first, receive the LLM as a second opinion, state your reasoning."
+        if _review_count > 0
+        else "Generate some 'Sent to analyst review' events above, then continue to see them in the analyst queue."
     )
+    story_next("Fraud Operations", _handoff_msg)
