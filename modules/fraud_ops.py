@@ -235,7 +235,7 @@ def _render_old_queue_rows(review_df: pd.DataFrame):
         )
 
 
-def _render_rubber_stamp_chart(reviews_df: pd.DataFrame):
+def _render_analyst_agreement_chart(reviews_df: pd.DataFrame):
     if reviews_df is None or len(reviews_df) == 0:
         return
     grouped = (
@@ -424,7 +424,7 @@ def _render_before_tab(live_df, reviews_df, appeals_df, perf_df=None):
     # Section 3
     st.markdown(f'<div style="color:{SPOTIFY_WHITE}; font-size:18px; font-weight:800;">3 · Human review workflow (5% of streams)</div>', unsafe_allow_html=True)
     st.markdown(f'<div style="color:{SPOTIFY_LIGHT_GRAY}; font-size:12px; margin-bottom:8px;">Only 5% of streams reach human review — these are genuine edge cases where the model\'s confidence is between 70-95%. The LLM assistant helps analysts investigate these cases, which is valuable. The workflow refinement opportunity: resequencing so the analyst forms a view before seeing the LLM summary, and introducing challenge cases to validate analyst independence. <strong style="color:{COLOR_WARNING};">Observation O-003.</strong></div>', unsafe_allow_html=True)
-    _render_rubber_stamp_chart(reviews_df)
+    _render_analyst_agreement_chart(reviews_df)
 
     st.markdown("<div style='height:24px'></div>", unsafe_allow_html=True)
 
@@ -711,8 +711,8 @@ def render(reviews_df, perf_df, appeals_df):
         step=2, total=3,
         title="The Problem & The Solution — What the 1st-line analyst sees",
         what_to_do="The <strong>Before</strong> tab shows the current workflow and areas for improvement: model drift, threshold governance, LLM sequencing. "
-        "circular dependency contaminating training labels. The <strong>After</strong> tab shows the same live events processed through "
-        "the recommended Signal Confirmation Card — click through one case and check the attestation box, then continue to Internal Audit.",
+        "The <strong>After</strong> tab shows the same live events processed through "
+        "the resequenced Signal Confirmation Card — assess signals first, receive LLM as second opinion, state your reasoning, then continue to Internal Audit.",
     )
 
     _render_header_strip()

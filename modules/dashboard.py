@@ -52,18 +52,18 @@ def render(events_df, reviews_df, perf_df, appeals_df, events_src):
 
     st.markdown("<div style='height:24px'></div>", unsafe_allow_html=True)
 
-    # Critical findings
-    st.markdown(f'<div style="font-size:20px; font-weight:700; color:{SPOTIFY_WHITE}; margin-bottom:16px;">Critical Findings</div>', unsafe_allow_html=True)
+    # Key observations
+    st.markdown(f'<div style="font-size:20px; font-weight:700; color:{SPOTIFY_WHITE}; margin-bottom:16px;">Key Observations</div>', unsafe_allow_html=True)
 
     findings = [
-        ("Model Performance Degradation", "CRITICAL", COLOR_DANGER,
-         f"Precision declined from 94.0% to {current_precision:.1%} following catalog acquisition. New catalog content flagged at 6.6x the rate of existing content."),
-        ("Threshold Governance", "CRITICAL", COLOR_DANGER,
-         "Classification thresholds (70%/95%) set by engineering without business stakeholder review. No sensitivity analysis. Potential SOX implications."),
-        ("Human Review Effectiveness", "HIGH", "#FF6437",
-         "3 of 8 analysts exhibit agreement rates above 96% with average review durations below 90 seconds. Workflow structurally favors agreement."),
-        ("Appeal Process Timeliness", "HIGH", "#FF6437",
-         f"Indie artists wait {appeals_df[appeals_df['artist_type']=='indie']['days_to_resolve'].mean():.0f} days vs {appeals_df[appeals_df['artist_type']=='major']['days_to_resolve'].mean():.0f} days for major labels. {overturn:.0%} overturn rate."),
+        ("Model Performance — Drift Detected", "HIGH", "#FF6437",
+         f"Scenario modeling shows precision declining post-catalog-acquisition. New catalog content flagged at elevated rate. (Illustrative data.)"),
+        ("Threshold Governance", "HIGH", "#FF6437",
+         "Classification thresholds (70%/95%) set by engineering without business stakeholder review. Opportunity for formal governance framework."),
+        ("Analyst Workflow Sequencing", "MEDIUM", COLOR_WARNING,
+         "LLM recommendation shown before analyst forms independent view. Signal Card resequencing recommended to validate independence."),
+        ("Appeal Process Timeliness", "MEDIUM", COLOR_WARNING,
+         f"Case study confirms 6-week appeal for one indie label. Scenario data models resolution time variations by artist type. SLA recommended. (Illustrative data.)"),
     ]
 
     for i in range(0, len(findings), 2):

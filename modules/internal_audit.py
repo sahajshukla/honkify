@@ -804,7 +804,7 @@ def _render_exceptions_inbox(controls):
 
     rows = []
     for i, ctrl in enumerate([c for c in controls if c["status"] in ("FAIL", "WARN")]):
-        sev = "Critical" if ctrl["status"] == "FAIL" else "Medium"
+        sev = "High" if ctrl["status"] == "FAIL" else "Medium"
         rows.append({
             "Finding ID": f"IAR-2026-{(_today_doy() + i):04d}",
             "Title": ctrl["name"],

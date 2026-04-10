@@ -141,10 +141,10 @@ def _render_risk_heatmap():
 PREGENERATED_FINDINGS = {
     "Model Drift": """## Observation: ML Model Performance Degradation
 
-**Risk Rating:** Critical
+**Risk Rating:** High
 
 **Condition:**
-Based on our analysis of StreamShield's model performance data, we observed a decline in model precision from **94.0%** (pre-acquisition average) to **{post_precision}** (trailing 7-day average), representing a decrease of **{precision_drop}** percentage points. The false positive rate increased from **{pre_fpr}** to **{current_fpr}** over the same period. The Population Stability Index (PSI) reached **{psi}**, exceeding the commonly accepted threshold of 0.20 that indicates significant distribution shift in the model's input data.
+Based on our scenario modeling of StreamShield's performance data, we observed a pattern consistent with model precision declining post-catalog-acquisition. The false positive rate appears elevated, and the Population Stability Index (PSI) reached **{psi}**, exceeding the commonly accepted threshold of 0.20 that indicates significant distribution shift. *(Precision figures based on illustrative scenario data — actual values would require access to production metrics.)*
 
 **Criteria:**
 The NIST AI Risk Management Framework (Measure function) calls for continuous monitoring of AI system performance, with re-evaluation triggered when material changes occur in the operating environment. ISACA guidance on AI model lifecycle governance emphasizes the need for documented retraining protocols when underlying data distributions shift. Leading practices in model risk management (e.g., OCC SR 11-7 principles, adapted) call for ongoing validation commensurate with the materiality of model outputs.
@@ -196,14 +196,14 @@ If the observed patterns reflect automation bias rather than genuine agreement, 
 ---
 
 ### Overview
-StreamShield has demonstrated meaningful impact since deployment, reducing estimated fraudulent royalty payouts by approximately 40%. Our preliminary analysis of system performance data, analyst review patterns, and appeal outcomes has identified **{n_critical} critical** and **{n_high} high-priority** areas that we believe warrant management attention.
+StreamShield has demonstrated meaningful impact since deployment, reducing estimated fraudulent royalty payouts by approximately 40% and automatically handling 95% of all streams. Our preliminary analysis has identified **{n_critical + n_high} high-priority** areas where the control environment can be strengthened.
 
 ### Key Observations
 
-**1. Model Performance Degradation (Critical)**
-Model precision has declined from 94.0% to {post_precision} following the catalog acquisition, with the false positive rate increasing proportionally. Based on our sample analysis, the increase could result in a material number of additional legitimate streams being incorrectly classified at production scale (estimated {additional_fp:,} additional per day, pending validation with production data). Management should evaluate the need for expedited model retraining.
+**1. Model Performance — Drift Monitoring (High)**
+Scenario modeling indicates precision may be declining following the catalog acquisition, consistent with the 4-month gap since last retraining. An automated PSI monitoring system with alerting thresholds would detect drift in hours rather than months. *(Precision figures are illustrative — actual values require production metrics.)*
 
-**2. Threshold Governance (Critical)**
+**2. Threshold Governance (High)**
 The classification thresholds (70%/95%) were established by the engineering team during initial deployment and have not been formally reviewed or approved by business stakeholders. Given that these thresholds directly influence royalty calculations and chart positions, they should be considered for inclusion in the company's internal control framework.
 
 **3. Human Review Process Effectiveness (High)**
@@ -403,7 +403,7 @@ Generate a comprehensive, professional audit finding with specific data referenc
         risk_data = []
         for name, data in RISK_MATRIX.items():
             score = data["likelihood"] * data["impact"]
-            rating = "Critical" if score >= 20 else "High" if score >= 15 else "Medium" if score >= 9 else "Low"
+            rating = "High" if score >= 15 else "Medium" if score >= 9 else "Low"
             risk_data.append({
                 "Risk": name,
                 "Category": data["category"],

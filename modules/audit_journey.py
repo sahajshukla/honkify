@@ -127,7 +127,7 @@ def _render_scenario_a_catalog_drift():
     """Scenario A: The original catalog drift scenario — current state failure."""
 
     st.markdown(
-        f'<div style="color:{COLOR_DANGER}; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.2px; margin-bottom:4px;">Scenario A &middot; Current State Failure</div>',
+        f'<div style="color:{COLOR_WARNING}; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.2px; margin-bottom:4px;">Scenario A &middot; Control Gap Identified</div>',
         unsafe_allow_html=True,
     )
     st.markdown(
