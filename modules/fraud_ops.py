@@ -729,20 +729,24 @@ def _render_after_tab(live_df, reviews_df, appeals_df):
     st.markdown(
         f"""
         <div style="background:linear-gradient(135deg, rgba(29,185,84,0.06), {SPOTIFY_CARD_BG}); border-radius:8px; padding:16px 20px; border-left:4px solid {SPOTIFY_GREEN}; margin-top:8px; margin-bottom:12px;">
-            <div style="color:{SPOTIFY_GREEN}; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">After: feature-level explainability deployed</div>
+            <div style="color:{SPOTIFY_GREEN}; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">After: explainability at the right level</div>
             <div style="color:{SPOTIFY_LIGHT_GRAY}; font-size:13px; line-height:1.7;">
-                <strong style="color:{SPOTIFY_WHITE};">What the analyst sees:</strong> The Signal Card's "Top 3 contributing signals" chips (visible in the queue rows above)
-                are a simplified SHAP output — they show which features most influenced the model's score for this specific stream.
-                This lets analysts learn from the model: "the model is flagging VPN + short play duration + new account age — I should
-                pay attention to that combination."<br><br>
-                <strong style="color:{SPOTIFY_WHITE};">What the artist sees (on appeal):</strong> Instead of "your streams received a fraud score of 0.84,"
-                the response can now say: "your streams were flagged because VPN usage contributed 35% to the score,
-                play duration consistency contributed 28%, and account age contributed 22%. If these signals do not apply to your
-                situation, the appeal will likely result in clearance."<br><br>
-                <strong style="color:{SPOTIFY_WHITE};">What the business learns:</strong> Aggregate SHAP analysis across all quarantine decisions reveals
-                which features the model relies on most heavily. When a catalog acquisition shifts the feature distribution,
-                the business can see exactly which new signals are triggering — enabling targeted retraining rather than blind re-runs.
-                <strong style="color:{SPOTIFY_GREEN};">This closes the black-box gap. Risk R11 addressed.</strong>
+                <strong style="color:{SPOTIFY_WHITE};">During case review — analyst sees raw signals only.</strong>
+                No model weights, no SHAP values, no LLM summary. The analyst makes an independent decision based on the actual data.
+                Showing model feature importance during review would create a new anchoring problem — replacing one bias source with another.<br><br>
+                <strong style="color:{SPOTIFY_WHITE};">Weekly team sessions — aggregate SHAP analysis.</strong>
+                Across hundreds of cases: "What signal combinations is the model weighting most heavily? Where do analyst assessments
+                diverge from each other?" This is where the team learns from the model's pattern recognition — at population level,
+                not per-case "gotcha" moments. When a catalog acquisition shifts the distribution, the team can see exactly which new
+                features are triggering and discuss calibration adjustments.<br><br>
+                <strong style="color:{SPOTIFY_WHITE};">On artist appeal — feature-level explanation.</strong>
+                When an artist asks "why was I flagged?", the response uses SHAP attribution: "VPN usage contributed 35%,
+                play duration 28%, account age 22%." This satisfies GDPR Article 22 and gives the artist a meaningful,
+                defensible explanation — not just a probability score.<br><br>
+                <strong style="color:{SPOTIFY_WHITE};">For IAR — population-level comparison.</strong>
+                The auditor compares analyst decisions against model recommendations across the full population for control testing (T3, T5).
+                No individual analyst is told "the AI disagreed with you." The comparison is systemic, not personal.
+                <strong style="color:{SPOTIFY_GREEN};">Risk R11 addressed at every level.</strong>
             </div>
         </div>
         """,

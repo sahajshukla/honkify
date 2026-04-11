@@ -242,95 +242,56 @@ def render_signal_card_widget(case: dict, key_prefix: str, on_submit=None):
             st.rerun()
 
         st.markdown(
-            f'<div style="color:{SPOTIFY_GRAY}; font-size:12px; font-style:italic; margin-top:12px; text-align:center;">The LLM summary and recommendation will appear as a second opinion after you submit your initial assessment</div>',
+            f'<div style="color:{SPOTIFY_GRAY}; font-size:12px; font-style:italic; margin-top:12px; text-align:center;">Your decision is final. No model output is shown during review — learning from model patterns happens in weekly aggregate team sessions, not per-case.</div>',
             unsafe_allow_html=True,
         )
 
     else:
-        agreed = case["analyst_decision"] == case["ai_recommendation"]
+        # Post-submission: clean confirmation. NO AI reveal. NO "agreed/overridden".
+        # The analyst's decision stands. Model comparison happens at population level for IAR.
 
-        st.markdown(
-            f'<div style="color:{SPOTIFY_WHITE}; font-size:16px; font-weight:700; margin-bottom:16px;">Results</div>',
-            unsafe_allow_html=True,
-        )
-
-        res_col1, res_col2, res_col3 = st.columns(3)
-        with res_col1:
-            st.markdown(
-                f"""
-                <div style="background:{SPOTIFY_CARD_BG}; border-radius:8px; padding:20px; border:1px solid rgba(83,83,83,0.2); text-align:center;">
-                    <div style="color:{SPOTIFY_LIGHT_GRAY}; font-size:11px; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Your Decision</div>
-                    <div style="color:{SPOTIFY_WHITE}; font-size:24px; font-weight:700;">{case['analyst_decision']}</div>
-                    <div style="color:{SPOTIFY_GRAY}; font-size:12px; margin-top:4px;">{case.get('fraud_count', 0)}/8 signals flagged</div>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-        with res_col2:
-            st.markdown(
-                f"""
-                <div style="background:{SPOTIFY_CARD_BG}; border-radius:8px; padding:20px; border:1px solid rgba(83,83,83,0.2); text-align:center;">
-                    <div style="color:{SPOTIFY_LIGHT_GRAY}; font-size:11px; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">LLM Second Opinion</div>
-                    <div style="color:{COLOR_INFO}; font-size:24px; font-weight:700;">{case['ai_recommendation']}</div>
-                    <div style="color:{SPOTIFY_GRAY}; font-size:12px; margin-top:4px;">Score: {case['fraud_score']:.0%}</div>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-        with res_col3:
-            match_color = SPOTIFY_GREEN if agreed else COLOR_WARNING
-            match_text = "AGREED" if agreed else "OVERRIDDEN"
-            st.markdown(
-                f"""
-                <div style="background:{SPOTIFY_CARD_BG}; border-radius:8px; padding:20px; border:1px solid rgba(83,83,83,0.2); text-align:center;">
-                    <div style="color:{SPOTIFY_LIGHT_GRAY}; font-size:11px; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Outcome</div>
-                    <div style="color:{match_color}; font-size:24px; font-weight:700;">{match_text}</div>
-                    <div style="color:{SPOTIFY_GRAY}; font-size:12px; margin-top:4px;">Logged to audit trail</div>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-
-        st.markdown(
-            f'<div style="color:{SPOTIFY_WHITE}; font-size:16px; font-weight:700; margin:20px 0 12px;">Structured Audit Trail</div>',
-            unsafe_allow_html=True,
-        )
-
-        trail_data = []
-        for signal_name, assessment in case["analyst_signals"].items():
-            ground_truth = case["signals"][signal_name]["fraud_ground_truth"]
-            trail_data.append({
-                "Signal": signal_name,
-                "Value": case["signals"][signal_name]["value"],
-                "Analyst Assessment": assessment,
-                "Consistent with Data": "Yes" if (assessment == "Yes") == ground_truth else "Review needed",
-            })
-
-        trail_df = pd.DataFrame(trail_data)
-        st.dataframe(trail_df, use_container_width=True, hide_index=True)
-
-        # Show reasoning
         analyst_reason = case.get("analyst_reason", "—")
+
+        # Confirmation card
         st.markdown(
             f"""
-            <div style="background:{SPOTIFY_CARD_BG}; border-radius:8px; padding:16px 20px; border:1px solid rgba(83,83,83,0.25); border-left:4px solid {COLOR_INFO}; margin-top:12px;">
-                <div style="color:{COLOR_INFO}; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Decision reasoning</div>
-                <div style="color:{SPOTIFY_WHITE}; font-size:14px; font-weight:600;">{analyst_reason}</div>
-                <div style="color:{SPOTIFY_GRAY}; font-size:11px; margin-top:6px;">Captured as part of structured audit trail. Used for: (1) model retraining with quality labels, (2) analyst training and knowledge management, (3) regulatory audit evidence.</div>
+            <div style="background:linear-gradient(135deg, rgba(29,185,84,0.08), {SPOTIFY_CARD_BG}); border-radius:8px; padding:20px 24px; border-left:4px solid {SPOTIFY_GREEN}; margin-bottom:16px;">
+                <div style="color:{SPOTIFY_GREEN}; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Disposition recorded</div>
+                <div style="color:{SPOTIFY_WHITE}; font-size:22px; font-weight:800;">{case['analyst_decision']}</div>
+                <div style="color:{SPOTIFY_LIGHT_GRAY}; font-size:13px; margin-top:6px;">Basis: {analyst_reason}</div>
+                <div style="color:{SPOTIFY_GRAY}; font-size:11px; margin-top:8px;">{case.get('fraud_count', 0)}/8 signals flagged as suspicious · Case {case['case_id']}</div>
             </div>
             """,
             unsafe_allow_html=True,
         )
 
+        # Structured audit trail
+        st.markdown(
+            f'<div style="color:{SPOTIFY_WHITE}; font-size:16px; font-weight:700; margin:12px 0 10px;">Structured Audit Trail</div>',
+            unsafe_allow_html=True,
+        )
+
+        trail_data = []
+        for signal_name, assessment in case["analyst_signals"].items():
+            trail_data.append({
+                "Signal": signal_name,
+                "Value": case["signals"][signal_name]["value"],
+                "Analyst Assessment": assessment,
+            })
+
+        trail_df = pd.DataFrame(trail_data)
+        st.dataframe(trail_df, use_container_width=True, hide_index=True)
+
+        # Where the data goes — aggregate learning, not per-case feedback
         st.markdown(
             f"""
-            <div style="background:linear-gradient(135deg, rgba(29,185,84,0.08), {SPOTIFY_CARD_BG}); border-radius:8px; padding:16px 20px; border-left:4px solid {SPOTIFY_GREEN}; margin-top:14px;">
-                <div style="color:{SPOTIFY_GREEN}; font-weight:700; font-size:13px; margin-bottom:6px;">The Positive Feedback Loop — Human + AI Together</div>
+            <div style="background:{SPOTIFY_CARD_BG}; border-radius:8px; padding:16px 20px; border:1px solid rgba(83,83,83,0.25); border-left:4px solid {COLOR_INFO}; margin-top:14px;">
+                <div style="color:{COLOR_INFO}; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Where this data goes</div>
                 <div style="color:{SPOTIFY_LIGHT_GRAY}; font-size:13px; line-height:1.7;">
-                    <strong style="color:{SPOTIFY_WHITE};">For the model:</strong> Structured, independent assessments with stated reasoning become quality training labels. The analyst's view is captured first, then the LLM's — both feed into the next training cycle with clear provenance.<br><br>
-                    <strong style="color:{SPOTIFY_WHITE};">For the LLM:</strong> The investigation assistant gets better over time because it trains on genuinely independent analyst decisions, not echoes of its own recommendations. The LLM remains a core part of the workflow — as a second opinion that the analyst can compare against their own assessment.<br><br>
-                    <strong style="color:{SPOTIFY_WHITE};">For the team:</strong> The reasoning field builds institutional knowledge. New analysts can query: "How did experienced analysts handle VPN + new account + low skip rate?" The Signal Card becomes both an audit control and a training tool.<br><br>
-                    <strong style="color:{SPOTIFY_WHITE};">For the auditor:</strong> Every decision is queryable, structured, and auditable at scale. The LLM summary is preserved alongside the analyst's independent assessment — two perspectives, one record.
+                    <strong style="color:{SPOTIFY_WHITE};">Model retraining:</strong> This structured, independent assessment becomes a quality training label with clear provenance — the analyst's signal-by-signal evaluation and stated reasoning, captured without any model influence.<br><br>
+                    <strong style="color:{SPOTIFY_WHITE};">Weekly team review:</strong> Aggregate patterns across hundreds of cases are reviewed in weekly sessions: "What signal combinations are analysts flagging most? Where do analyst assessments diverge from each other?" Learning happens at population level, not per-case second-guessing.<br><br>
+                    <strong style="color:{SPOTIFY_WHITE};">IAR control testing:</strong> The auditor compares analyst decisions against model recommendations across the full population — but this comparison is for control effectiveness testing (T3, T5), not individual analyst feedback. No analyst is told "the AI disagreed with you on case 47."<br><br>
+                    <strong style="color:{SPOTIFY_WHITE};">Institutional knowledge:</strong> The reasoning field is searchable. New analysts can query: "How did experienced analysts handle VPN + new account + low skip rate?" — learning from colleagues, not from the model.
                 </div>
             </div>
             """,
@@ -344,8 +305,8 @@ def render():
     st.markdown(
         f'<p style="color:{SPOTIFY_LIGHT_GRAY}; font-size:15px; margin-top:-8px;">'
         "Experience the proposed analyst workflow. Evaluate each signal independently, "
-        "make your classification decision, then see how the AI would have classified it. "
-        "This resequences the workflow so analysts assess signals first, then receive the LLM summary as a second opinion."
+        "make your classification decision, and state your reasoning. "
+        "No model output is shown — the analyst's judgment is final. Learning from model patterns happens in weekly aggregate team sessions."
         "</p>",
         unsafe_allow_html=True,
     )
@@ -373,11 +334,12 @@ def render():
             <div style="background:{SPOTIFY_CARD_BG}; border-radius:8px; padding:16px; border:1px solid rgba(83,83,83,0.2); border-top:3px solid {SPOTIFY_GREEN};">
                 <div style="color:{SPOTIFY_GREEN}; font-size:13px; font-weight:700; margin-bottom:8px;">Proposed Workflow (Signal Card)</div>
                 <div style="color:{SPOTIFY_LIGHT_GRAY}; font-size:13px; line-height:1.6;">
-                    1. Analyst sees raw signal values first<br>
+                    1. Analyst sees raw signal values only<br>
                     2. Analyst assesses each signal: Y/N<br>
                     3. Analyst makes classification + states reasoning<br>
-                    4. LLM summary appears as second opinion<br><br>
-                    <span style="color:{SPOTIFY_GREEN};">Result: Human + AI, verifiable independence</span>
+                    4. Decision logged. No model output shown.<br>
+                    5. Aggregate learning in weekly team sessions<br><br>
+                    <span style="color:{SPOTIFY_GREEN};">Result: Clean independence, no per-case second-guessing</span>
                 </div>
             </div>
             """,
