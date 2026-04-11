@@ -610,13 +610,16 @@ def _render_before_tab(perf_df):
     st.markdown(f'<div style="color:{SPOTIFY_LIGHT_GRAY}; font-size:12px; margin-bottom:10px;">The assessment identified 7 observations — framed as optimization opportunities, not failures. Each drives an action plan to mature the control environment.</div>', unsafe_allow_html=True)
 
     findings_data = [
-        ("O-001", "High", "R1, R4", "Model drift detection is manual — opportunity for automation", "Deploy continuous PSI monitoring with alerting thresholds (0.10 warn, 0.20 critical). Trigger retraining within 14 days of catalog acquisitions."),
-        ("O-002", "High", "R2", "Threshold governance can be formalized", "Establish governance framework with quarterly Finance/Legal/Content sign-off. Include in SOX controls matrix."),
-        ("O-003", "High", "R3", "Analyst independence should be validated", "Implement Signal Confirmation Card to make independence verifiable. Deploy challenge case program (5% of queue) to calibrate."),
-        ("O-004", "High", "R4", "Continuous monitoring would strengthen assurance", "Build CCM platform with 11 automated tests (T1-T11), exceptions inbox, and workpaper generation."),
-        ("O-005", "Medium", "R5, R6", "Appeal SLA and equity can be improved", "Establish 10-day SLA for all artist types. Implement provisional royalty payments during appeal."),
-        ("O-006", "Medium", "R7", "LLM documentation QA would strengthen the audit trail", "Require analyst attestation. Pin prompt versions. Monthly 10% sample QA."),
-        ("O-007", "Medium", "R1, R5", "New catalog content needs onboarding protocol", "Catalog Onboarding Protocol: 90-day grace period, threshold adjustment, provisional royalties, 30-day mandatory retraining."),
+        ("O-001", "High", "R1, R4", "Model drift detection — automate monitoring", "Deploy continuous PSI monitoring with alerting thresholds (0.10 warn, 0.20 critical). Trigger retraining within 14 days of catalog acquisitions."),
+        ("O-002", "High", "R2", "Threshold governance — formalize business approval", "Establish governance framework with quarterly Finance/Legal/Content sign-off. Include in SOX controls matrix."),
+        ("O-003", "Medium", "R3", "Analyst independence — validate via resequencing", "Resequence Signal Card (raw signals first, no model output during review). Deploy challenge case program (5% of queue) for validation."),
+        ("O-004", "High", "R4", "Continuous monitoring — biggest single gap", "Build CCM platform with 11 automated tests (T1-T11), exceptions inbox, and workpaper generation."),
+        ("O-005", "Medium", "R5, R6", "Appeal process — add SLA and provisional royalties", "Establish 10-day SLA for all artist types. Implement provisional royalty payments during appeal."),
+        ("O-006", "Medium", "R7", "LLM documentation — add attestation workflow", "Require analyst attestation. Pin prompt versions. Monthly 10% sample QA. LLM remains as a valuable tool."),
+        ("O-007", "Medium", "R1, R5", "Catalog onboarding — protect new content", "Catalog Onboarding Protocol: 90-day grace period, threshold adjustment, provisional royalties, 30-day mandatory retraining."),
+        ("O-008", "High", "R8", "Downstream data — establish validation", "Formal data contracts with Finance/Ads/Analytics. Automated hourly reconciliation. SOX IPE documentation."),
+        ("O-009", "High", "R10", "Change management — create ITGC framework", "Formal change management for model retraining, threshold changes, LLM prompt updates. Configuration register with version history."),
+        ("O-010", "Medium", "R11", "Explainability — deploy SHAP for appeals and learning", "SHAP values for appeal responses. Aggregate SHAP in weekly team sessions. No per-case model output during analyst review."),
     ]
     findings_df = pd.DataFrame(findings_data, columns=["Observation", "Priority", "Risks", "Opportunity", "Recommendation"])
     st.dataframe(findings_df, use_container_width=True, hide_index=True)
@@ -659,12 +662,12 @@ def _render_before_tab(perf_df):
                 <strong style="color:{SPOTIFY_GREEN};">6 of 19 sub-processes are operating effectively</strong> —
                 the ML scoring engine, three-tier classification, LLM investigation assistant, 90-day quarantine hold,
                 downstream exclusion, and the appeal process all function as designed. StreamShield has reduced
-                fraudulent royalty payouts by ~40%.
-                <strong style="color:{COLOR_WARNING};">5 sub-processes need improvement</strong> (threshold governance,
-                analyst independence validation, LLM attestation, retraining cadence, ground truth coverage).
+                fraudulent royalty payouts by ~40% and automatically handles 95% of all streams.
+                <strong style="color:{COLOR_WARNING};">7 sub-processes present improvement opportunities</strong> (threshold governance,
+                analyst workflow sequencing, LLM attestation, retraining cadence, ground truth coverage, appeal SLA, explainability).
                 <strong style="color:{COLOR_DANGER};">6 sub-processes have gaps</strong> (continuous monitoring,
-                provisional royalties, data contracts, explainability, catalog onboarding). 2 require validation.
-                Compliance exposure spans 12+ jurisdictions.
+                provisional royalties, data contracts, change management, catalog onboarding, downstream validation).
+                5 observations rated High, 5 rated Medium — zero Critical.
                 <strong style="color:{SPOTIFY_WHITE};">Recommendation: build on the strong foundation by transitioning
                 from periodic audit to continuous controls monitoring.</strong>
             </div>
